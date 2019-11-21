@@ -1,18 +1,34 @@
 # Rundeck Image with SSL
 
+
+## Build and start
 Build extended image
 
 ```
-docker build -t rundeck-ssl .
-
+docker-compose build
 ```
 
 Run 
 
 ```
-docker run -d  --name some-rundeck -p 4444:4443 \
-	   -e RUNDECK_GRAILS_URL=https://localhost:4444 \
-	   rundeck-ssl \
-       -Dserver.https.port=4443 \
-       -Drundeck.ssl.config=/home/rundeck/server/config/ssl.properties
+docker-compose up -d
 ```
+
+
+## Access
+
+Rundeck
+```
+https://localhost  or http://localhost
+
+```
+
+
+HaProxy admin 
+
+```
+https://localhost/haproxy?stats
+```
+
+* user: admin
+* password: admin

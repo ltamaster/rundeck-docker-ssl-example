@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  rundeck:
+    build:
+      context: rundeck
+    command: ["-Drundeck.ssl.config=/home/rundeck/server/config/ssl.properties"]
+    environment:
+      RUNDECK_GRAILS_URL: https://localhost:443
+      RUNDECK_DATABASE_DRIVER: com.mysql.jdbc.Driver
+      RUNDECK_DATABASE_USERNAME: rundeck
+      RUNDECK_DATABASE_PASSWORD: ${MYSQL_USER_PASSWORD}
+      RUNDECK_DATABASE_URL: jdbc:mysql://mysql/rundeck?autoReconnect=true&useSSL=false
+    ports:
+      - 4444:4443
+  haproxy:
+     build:
+       context: ./haproxy
+     ports:
+       - 443:443
+       - 80:80
+     environment:
+       SSHD_PORT: 22
+       HAPROXY_SERVER_1_NAME: rundeck
+       HAPROXY_SERVER_1_PORT: 4443
+     links:
+       - rundeck
+  mysql:
+    image: mysql:5.7
+    expose:
+      - 3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_USER_PASSWORD}
+      MYSQL_DATABASE: rundeck
+      MYSQL_USER: rundeck
+      MYSQL_PASSWORD: ${MYSQL_USER_PASSWORD}
